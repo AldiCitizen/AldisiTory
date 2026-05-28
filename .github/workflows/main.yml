@@ -1,0 +1,37 @@
+name: Collaborative Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update_html_and_readme:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+        # Step 2: Update HTML based on who pushes (Activity 2)
+      - name: Update HTML
+        run: |
+          echo "<p>Latest update made by user: ${{ github.actor }}</p>" >> index.html
+
+      # Step 3: Update README with Timestamp and Commit Hash (Activity 3)
+      - name: Update README Log
+        run: |
+          echo "### Update Log" >> README.md
+          echo "- **User:** ${{ github.actor }}" >> README.md
+          echo "- **Commit:** ${{ github.sha }}" >> README.md
+          echo "- **Time:** $(date)" >> README.md
+
+      # Step 4: Commit and Push the automated changes back (Activity 4)
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          git add index.html README.md
+          git commit -m "Automated update via GitHub Actions [skip ci]"
+          git push
