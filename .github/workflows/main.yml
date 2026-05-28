@@ -1,4 +1,4 @@
-name: Collaborative Workflow
+name: Lecture 3 Custom Action and Docker Pipeline
 
 on:
   push:
@@ -6,32 +6,28 @@ on:
       - main
 
 jobs:
-  update_html_and_readme:
+  run_custom_and_docker:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
+      # Step 1: Fetch your project code onto the cloud runner
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-        # Step 2: Update HTML based on who pushes (Activity 2)
-      - name: Update HTML
-        run: |
-          echo "<p>Latest update made by user: ${{ github.actor }}</p>" >> index.html
+      # Step 2: Run your local JavaScript custom action natively
+      - name: Execute Custom Action
+        uses: ./
+        with:
+          who-to-greet: 'AldiCitizen'
 
-      # Step 3: Update README with Timestamp and Commit Hash (Activity 3)
-      - name: Update README Log
-        run: |
-          echo "### Update Log" >> README.md
-          echo "- **User:** ${{ github.actor }}" >> README.md
-          echo "- **Commit:** ${{ github.sha }}" >> README.md
-          echo "- **Time:** $(date)" >> README.md
+      # Step 3: Set up Docker build engine on the runner (Slide 31)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-      # Step 4: Commit and Push the automated changes back (Activity 4)
-      - name: Commit and Push Changes
-        run: |
-          git config --global user.name "GitHub Actions Bot"
-          git config --global user.email "actions@github.com"
-          git add index.html README.md
-          git commit -m "Automated update via GitHub Actions [skip ci]"
-          git push
+      # Step 4: Build the container image from your Dockerfile (Slide 32)
+      - name: Build Docker Image
+        run: docker build -t my-custom-app .
+
+      # Step 5: Boot up and run your isolated application container (Slide 33)
+      - name: Run Docker Container
+        run: docker run my-custom-app
