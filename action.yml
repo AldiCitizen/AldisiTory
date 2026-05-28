@@ -1,0 +1,13 @@
+name: 'My Custom Team Action'
+description: 'A custom action built for the UTS software engineering lab'
+inputs:
+  who-to-greet:
+    description: 'Who to greet in the logs'
+    required: true
+    default: 'UTS Student'
+outputs:
+  greeting-time:
+    description: 'The time when the greeting happened'
+runs:
+  using: 'node16'
+  main: 'index.js'
